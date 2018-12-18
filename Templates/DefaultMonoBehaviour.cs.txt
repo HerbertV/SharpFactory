@@ -1,0 +1,80 @@
+﻿#HEADER#
+using System;
+using UnityEngine;
+#IF_NAMESPACE_ENABLED#
+namespace #NAMESPACE_PREFIX##NAMESPACE_CLASS#
+{
+#ENDIF_NAMESPACE_ENABLED#
+	/// <summary>
+	/// Class #SCRIPTNAME#
+	/// </summary>
+	public class #SCRIPTNAME# : MonoBehaviour
+	{
+		/*
+		 * =========================================================================
+		 *  Variables
+		 * =========================================================================
+		 */
+		
+		/*
+		 * =========================================================================
+		 *  Accessors
+		 * =========================================================================
+		 */
+		 
+		/*
+		 * =========================================================================
+		 *  Unity3d Behaviour Live Cycle
+		 * =========================================================================
+		 */
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		protected virtual void Awake()
+		{
+			#NOTRIM#
+		}
+		 
+		/// <summary>
+		/// 
+		/// </summary>
+		protected virtual void Start()
+		{
+			#NOTRIM#
+		}
+		 
+		/// <summary>
+		/// 
+		/// </summary>
+		protected virtual void OnEnable()
+		{
+			#NOTRIM#
+		}
+		 		 
+		/// <summary>
+		/// 
+		/// </summary>
+		protected virtual void Update()
+		{
+			#NOTRIM#
+		}
+		 
+		/// <summary>
+		/// 
+		/// </summary>
+		protected virtual void OnDisable()
+		{
+			#NOTRIM#
+		}
+		 		 
+		/*
+		 * =========================================================================
+		 *  Functions
+		 * =========================================================================
+		 */
+		
+	}
+#IF_NAMESPACE_ENABLED#
+}
+#ENDIF_NAMESPACE_ENABLED#
