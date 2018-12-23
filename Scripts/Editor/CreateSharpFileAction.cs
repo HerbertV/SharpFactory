@@ -10,11 +10,11 @@
  *  Licensed under the MIT License. 
  *  See LICENSE file in the project root for full license information.
  */
-using HVUnity.Core.Editor;
-using System.Reflection;
 using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
 using UnityEngine;
+
+using HVUnity.Core.Editor;
 
 namespace HVUnity.SharpFactory
 {

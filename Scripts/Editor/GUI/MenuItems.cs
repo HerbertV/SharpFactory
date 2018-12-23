@@ -41,7 +41,9 @@ namespace HVUnity.SharpFactory.GUI
 		/// </summary>
 		internal const string MENU_ITEM_PATH_WINDOW = "Window/SharpFactory/";
 
-
+		/// <summary>
+		/// Menu item sub path for wildcards
+		/// </summary>
 		internal const string MENU_ITEM_PATH_CREATE_WILDCARDS = MENU_ITEM_PATH_CREATE + "Wildcards/";
 
 		/*

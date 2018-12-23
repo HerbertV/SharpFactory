@@ -1,0 +1,13 @@
+{
+    "name": "hvunity.SharpFactory.Editor",
+    "references": [
+        "hvunity.Core.Editor",
+        "hvunity.Core.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
