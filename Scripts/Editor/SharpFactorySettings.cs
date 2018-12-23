@@ -16,34 +16,41 @@ using UnityEngine;
 
 using HVUnity.Core;
 using HVUnity.SharpFactory.Wildcards;
+using UnityEditor;
+using System;
+using System.IO;
 
 namespace HVUnity.SharpFactory
 {
-	public enum ConditionalFlags
-	{
-		None,
-		EnableNamespace,
-		UseFolderStructureAsNamespace
-	}
-
 	/// <summary>
 	/// Class SharpFactorySettings
 	/// </summary>
-	[CreateAssetMenu(fileName ="SharpFactorySettings", menuName ="SharpFactory/Create Settings")]
+	//[CreateAssetMenu(fileName ="SharpFactorySettings", menuName ="SharpFactory/Create Settings")]
 	public class SharpFactorySettings : SingletonScriptableObject<SharpFactorySettings>
 	{
+		/*
+		 * =========================================================================
+		 *  Variables
+		 * =========================================================================
+		 */
+
+		[Header("Namespace Settings:")]
 		/// <summary>
-		/// if true namespace for new classes will be used
+		/// If true namespace for new classes will be used
+		/// Is also a  <see cref="ConditionalFlag"/>
 		/// </summary>
 		[SerializeField]
-		public bool enableNamespace = true;
+		private bool enableNamespace = true;
 
-
+		/// <summary>
+		/// If true the namespace is generated from the folder structure
+		/// Is also a  <see cref="ConditionalFlag"/>
+		/// </summary>
 		[SerializeField]
 		private bool useFolderStructureAsNamespace = false;
 
 		/// <summary>
-		/// the default namespace
+		///The default namespace
 		/// </summary>
 		[SerializeField]
 		private string namespacePrefix;
@@ -56,8 +63,9 @@ namespace HVUnity.SharpFactory
 		private string licenseName;
 
 		/// <summary>
-		/// if empty the PlayerSettings company name is used
+		/// If empty the PlayerSettings company name is used
 		/// </summary>
+		[Tooltip("If empty, the company name from your Player Settings is used.")]
 		[SerializeField]
 		private string author;
 		
@@ -65,13 +73,62 @@ namespace HVUnity.SharpFactory
 		/// <summary>
 		/// list of all used wildcards for the templates
 		/// </summary>
+		[SerializeField]
 		public List<AbstractSharpWildcard> wildcards;
 
 		/// <summary>
 		/// list of used templates
 		/// </summary>
+		[SerializeField]
 		public List<TemplateFile> templates;
 
+		/*
+		 * =========================================================================
+		 *  Accessors
+		 * =========================================================================
+		 */
+
+		/// <summary>
+		/// If true namespace for new classes will be used
+		/// Is also a  <see cref="ConditionalFlag"/>
+		/// </summary>
+		public bool EnableNamespace
+		{
+			get{ return enableNamespace; }
+		}
+
+		/// <summary>
+		/// If true the namespace is generated from the folder structure
+		/// Is also a  <see cref="ConditionalFlag"/>
+		/// </summary>
+		public bool UseFolderStructureAsNamespace
+		{
+			get{ return useFolderStructureAsNamespace; }
+		}
+
+		/// <summary>
+		/// The default namespace 
+		/// </summary>
+		public string NamespacePrefix
+		{
+			get{ return namespacePrefix; }
+		}
+
+		/// <summary>
+		/// Name of the License for copyright info
+		/// </summary>
+		public string LicenseName
+		{
+			get	{ return licenseName; }
+		}
+
+		/// <summary>
+		/// Name of the Author for copyright info
+		/// </summary>
+		public string Author
+		{
+			get { return author; }
+		}
 
 	}
 }

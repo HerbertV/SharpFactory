@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 #IF_NAMESPACE_ENABLED#
-namespace #NAMESPACE_PREFIX##NAMESPACE_CLASS#
+namespace #NAMESPACE#
 {
 #ENDIF_NAMESPACE_ENABLED#
 	/// <summary>

@@ -10,34 +10,39 @@
  *  Licensed under the MIT License. 
  *  See LICENSE file in the project root for full license information.
  */
-using System.Text.RegularExpressions;
-
+using UnityEditor;
 using UnityEngine;
 
 namespace HVUnity.SharpFactory.Wildcards
 {
 	/// <summary>
-	/// Class SnippetWildcard
+	/// Class AuthorWildcard
 	/// 
-	/// Replaces the found string with a snippet file
+	/// Unique Wildcard.
+	/// 
+	/// Replaces the "#AUTHOR" marker with author from <see cref="SharpFactorySettings"/>
+	/// or if empty with company name from <see cref="PlayerSettings"/>.
 	/// </summary>
-	public class SnippetWildcard : AbstractSharpReplaceable
+	public class AuthorWildcard : AbstractSharpReplaceable
 	{
-		/// <summary>
-		/// TextAsset of the snippet, can be null
-		/// </summary>
-		[SerializeField]
-		[Tooltip("if none, the replacer marker is only removed")]
-		private TextAsset textAsset;
-		
+		private void Awake()
+		{
+			// set fixed value
+			isUnique = true;
+			replacer = "#AUTHOR#";
+		}
+
 		public override string process(string scriptPath, string templateContent)
 		{
-			string snippetText = string.Empty;
+			string author = SharpFactorySettings.Instance.Author;
 
-			if( textAsset != null )
-				snippetText = textAsset.text;
+			if( string.IsNullOrEmpty(author) )
+				author = PlayerSettings.companyName;
 
-			return Regex.Replace(templateContent, replacer, snippetText);
+			if( string.IsNullOrEmpty(author) )
+				return templateContent;
+
+			return templateContent.Replace(replacer,author);
 		}
 	}
 }

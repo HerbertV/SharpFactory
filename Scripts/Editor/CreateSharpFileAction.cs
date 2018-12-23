@@ -10,6 +10,8 @@
  *  Licensed under the MIT License. 
  *  See LICENSE file in the project root for full license information.
  */
+using HVUnity.Core.Editor;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
 using UnityEngine;
@@ -23,10 +25,23 @@ namespace HVUnity.SharpFactory
 	/// </summary>
 	internal class CreateSharpFileAction : EndNameEditAction
 	{
-		public override void Action(int instanceId, string pathName, string resourceFile)
+		/// <summary>
+		/// Optional icon the script asset show in the project window and inspector
+		/// </summary>
+		public Texture2D scriptIcon;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="instanceId"></param>
+		/// <param name="scriptPath"></param>
+		/// <param name="resourceFile"></param>
+		public override void Action(int instanceId, string scriptPath, string resourceFile)
 		{
-			Object obj = SharpFactory.createScriptFromTemplate(pathName, resourceFile);
+			Object obj = SharpFactory.createScriptFromTemplate(scriptPath, resourceFile);
+			EditorIcons.injectIcon(obj,scriptIcon);
 			ProjectWindowUtil.ShowCreatedAsset(obj);
 		}
+
 	}
 }

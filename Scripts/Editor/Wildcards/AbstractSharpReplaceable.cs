@@ -10,21 +10,22 @@
  *  Licensed under the MIT License. 
  *  See LICENSE file in the project root for full license information.
  */
+using UnityEngine;
 
 namespace HVUnity.SharpFactory.Wildcards
 {
 	/// <summary>
-	/// Interface ISharpCondition
+	/// Abstract class AbstractSharpReplaceable
 	/// 
-	/// used in combination with <see cref="ConditionalFlag"/>
+	/// Extends the abstract wildcard with a replacer marker
 	/// </summary>
-	public interface ISharpCondition
+	public abstract class AbstractSharpReplaceable : AbstractSharpWildcard
 	{
 		/// <summary>
-		/// checks the if the condition of the associated <see cref="ConditionalFlag"/> is met
+		/// The string marker that is replaced
 		/// </summary>
-		/// <returns></returns>
-		bool checkCondition();
+		[SerializeField]
+		protected string replacer;
 
 	}
 }

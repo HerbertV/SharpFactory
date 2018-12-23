@@ -10,21 +10,31 @@
  *  Licensed under the MIT License. 
  *  See LICENSE file in the project root for full license information.
  */
+using System;
+
+using UnityEngine;
 
 namespace HVUnity.SharpFactory.Wildcards
 {
 	/// <summary>
-	/// Interface ISharpCondition
+	/// Class CreationDateWildcard
 	/// 
-	/// used in combination with <see cref="ConditionalFlag"/>
+	/// Unique Wildcard.
+	/// 
+	/// Replaces the "#CREATION_YEAR" marker with the current year.
 	/// </summary>
-	public interface ISharpCondition
+	public class CreationDateWildcard : AbstractSharpReplaceable
 	{
-		/// <summary>
-		/// checks the if the condition of the associated <see cref="ConditionalFlag"/> is met
-		/// </summary>
-		/// <returns></returns>
-		bool checkCondition();
+		private void Awake()
+		{
+			// set fixed value
+			isUnique = true;
+			replacer = "#CREATION_YEAR#";
+		}
 
+		public override string process(string scriptPath, string templateContent)
+		{
+			return templateContent.Replace(replacer, DateTime.Now.ToString("yyyy") );
+		}
 	}
 }

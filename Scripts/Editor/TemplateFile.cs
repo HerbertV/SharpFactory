@@ -34,8 +34,14 @@ namespace HVUnity.SharpFactory
 	[Serializable]
 	public class TemplateFile
 	{
+		/// <summary>
+		/// Type of the template
+		/// </summary>
 		public TemplateType type = TemplateType.Unknown;
 
+		/// <summary>
+		/// Linked template TextAsset
+		/// </summary>
 		public TextAsset textAsset;
 
 		/// <summary>

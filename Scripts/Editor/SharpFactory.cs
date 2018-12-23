@@ -1,67 +1,35 @@
-﻿using HVUnity.Core.Editor;
-using HVUnity.SharpFactory.Wildcards;
+﻿
 using Microsoft.CSharp;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using UnityEditor;
 using UnityEngine;
 
+using HVUnity.Core.Editor;
+using HVUnity.SharpFactory.Wildcards;
 
 namespace HVUnity.SharpFactory
 {
-	
+	/// <summary>
+	/// Used for processing <see cref="AbstractSharpWildcard"/> with <see cref="ISharpCondition"/>
+	/// </summary>
+	public enum ConditionalFlag
+	{
+		None,
+		EnableNamespace,
+		UseFolderStructureAsNamespace
+	}
+
+	/// <summary>
+	/// Class SharpFactory
+	/// 
+	/// 
+	/// </summary>
 	public static class SharpFactory
 	{
 		
-		/*
-		 * =========================================================================
-		 *  Constants
-		 * =========================================================================
-		 */
-		
-		/// <summary>
-		/// Menu item path base
-		/// </summary>
-		private const string MENU_ITEM_PATH = "Assets/Create/SharpFactory/";
-
-		/*
-		 * =========================================================================
-		 *  Menu Items
-		 * =========================================================================
-		 */
-
-		[MenuItem(MENU_ITEM_PATH + "C# MonoBehaviour")]
-		private static void createCSharpMonoBehaviour()
-		{
-			Debug.Log("Create C# MonoBehaviour");
-
-			TemplateFile template = findTemplate(TemplateType.MonoBehaviour);
-
-			if( template == null )
-				return;
-						
-			ProjectWindowUtil.StartNameEditingIfProjectWindowExists(
-					0,
-					ScriptableObject.CreateInstance<CreateSharpFileAction>(),
-					"NewMonoBehaviour.cs",
-					EditorIcons.CSharpGenericIcon,
-					template.getTemplatePath()
-				);
-		}
-
-		[MenuItem(MENU_ITEM_PATH + "C# MonoBehaviour",true)]
-		private static bool checkCSharpMonoBehaviour()
-		{
-			if( findTemplate(TemplateType.MonoBehaviour) == null )
-				return false;
-
-			return true;
-		}
-
 		/*
 		 * =========================================================================
 		 *  Functions
@@ -82,15 +50,37 @@ namespace HVUnity.SharpFactory
 		}
 
 		/// <summary>
-		/// 
+		/// returns the template for the corresponding type
 		/// </summary>
-		/// <param name="pathName"></param>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		internal static TemplateFile findTemplate(TemplateType type)
+		{
+			if( SharpFactorySettings.Instance.templates == null 
+					|| SharpFactorySettings.Instance.templates.Count == 0 )
+				return null;
+
+			foreach( TemplateFile tf in SharpFactorySettings.Instance.templates )
+			{
+				if( tf.type == type )
+					return tf;
+			}
+
+			Debug.LogError("No template file defined for " + type.ToString());
+
+			return null;
+		}
+
+		/// <summary>
+		/// Creates the new script asset
+		/// </summary>
+		/// <param name="scriptPath"></param>
 		/// <param name="templatePath"></param>
 		/// <returns></returns>
-		internal static Object createScriptFromTemplate(string pathName, string templatePath)
+		internal static Object createScriptFromTemplate(string scriptPath, string templatePath)
 		{
 			// first create a unique path
-			string uniquePath = AssetDatabase.GenerateUniqueAssetPath(pathName);
+			string uniquePath = AssetDatabase.GenerateUniqueAssetPath(scriptPath);
 
 			string baseFile = Path.GetFileNameWithoutExtension(uniquePath);
 			string className = normalizeClassName(baseFile);
@@ -104,19 +94,39 @@ namespace HVUnity.SharpFactory
 			templateText = templateText.Replace("#NAME#", baseFile);
 
 			// replace custom wildcards
-			templateText = replaceWildcards(templateText);
+			templateText = processWildcards(scriptPath,templateText);
 
 			templateText = setLineEndings(templateText, EditorSettings.lineEndingsForNewScripts);
 			
 			// write new script
 			File.WriteAllText(
-					Path.GetFullPath(pathName), 
+					Path.GetFullPath(scriptPath), 
 					templateText, 
 					new UTF8Encoding(true)
 				);
 
-			AssetDatabase.ImportAsset(pathName);
-			return AssetDatabase.LoadAssetAtPath(pathName, typeof(Object));
+			AssetDatabase.ImportAsset(scriptPath);
+			
+			return AssetDatabase.LoadAssetAtPath(scriptPath, typeof(Object));
+		}
+
+		/// <summary>
+		/// Calls all wildcards found in <see cref="SharpFactorySettings"/>
+		/// </summary>
+		/// <param name="scriptPath"></param>
+		/// <param name="templateText"></param>
+		/// <returns></returns>
+		internal static string processWildcards(string scriptPath, string templateText)
+		{
+			foreach( AbstractSharpWildcard w in SharpFactorySettings.Instance.wildcards )
+			{
+				// failsave
+				if( w == null )
+					continue;
+
+				templateText = w.process(scriptPath, templateText);
+			}
+			return templateText;
 		}
 
 		/// <summary>
@@ -154,38 +164,6 @@ namespace HVUnity.SharpFactory
 			content = Regex.Replace(content, @"\r\n?|\n", preferredLineEndings);
 
 			return content;
-		}
-
-		internal static TemplateFile findTemplate(TemplateType type)
-		{
-			foreach( TemplateFile tf in SharpFactorySettings.Instance.templates )
-			{
-				if( tf.type == type )
-					return tf;
-			}
-
-			Debug.LogError("No template file defined for " + type.ToString());
-
-			return null;
-		}
-
-		internal static string replaceWildcards(string templateText)
-		{
-			foreach(AbstractSharpWildcard w in SharpFactorySettings.Instance.wildcards )
-			{
-				if( w == null )
-					continue;
-
-				if( w is ConditionalWildcard )
-				{
-					if( ((ConditionalWildcard)w).conditionalFlag == ConditionalFlags.EnableNamespace ) 
-						templateText = w.replace(templateText,SharpFactorySettings.Instance.enableNamespace);
-
-				} else {
-					templateText = w.replace(templateText);
-				}
-			}
-			return templateText;
 		}
 
 	}

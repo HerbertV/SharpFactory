@@ -19,52 +19,81 @@ namespace HVUnity.SharpFactory.Wildcards
 	/// <summary>
 	/// Class ConditionalWildcard
 	/// 
-	/// Removes a section of the template if condition is not meet.
+	/// Removes a section of the template if condition is not met.
 	/// Section starts with replacer and ends with replacerEnd.
 	/// 
-	/// If condition is meet only the wildcards are removed
+	/// If condition is met only the replacing markers are removed.
 	/// </summary>
-	[CreateAssetMenu(fileName = "NewSnippetWildcard", menuName = "SharpFactory/Wildcards/Create ConditionalWildcard")]
-	public class ConditionalWildcard : AbstractSharpWildcard
+	public class ConditionalWildcard : AbstractSharpReplaceable
 	{
+		/*
+		 * =========================================================================
+		 *  Variables
+		 * =========================================================================
+		 */
+
 		/// <summary>
-		/// end of section
+		/// End of replacing section
 		/// </summary>
 		[SerializeField]
-		private string sectionEnd;
+		private string replacerEnd;
 
+		/// <summary>
+		/// The conditonal flag reference that is used
+		/// </summary>
 		[SerializeField]
-		public ConditionalFlags conditionalFlag;
+		private ConditionalFlag conditionalFlag;
 
-		
-		public override string replace(string template, params object[] options)
+		/// <summary>
+		/// If true one leading "/t" per line is removed 
+		/// </summary>
+		[SerializeField]
+		private bool removeLeadingTab = false;
+
+		/*
+		 * =========================================================================
+		 *  Functions
+		 * =========================================================================
+		 */
+
+		public override string process(string scriptPath, string templateContent)
 		{
-
-			if( options == null || options.Length == 0)
-				return template;
-
-
-			Debug.Log("condition: "+ options[0]);
-
-			if( (bool)options[0] )
+			if( checkCondition() )
 			{
-				// condition is meet just remove the wildcards
-				template = template.Replace(replacer, string.Empty);
-				template = template.Replace(sectionEnd, string.Empty);
+				// condition is met just remove the wildcards
+				templateContent = templateContent.Replace(replacer, string.Empty);
+				templateContent = templateContent.Replace(replacerEnd, string.Empty);
 
 			} else {
-				// condition not meet remove the section
-				template = Regex.Replace(
-						template, 
-						replacer + ".*?" + sectionEnd, 
+				// condition not met remove the section
+				templateContent = Regex.Replace(
+						templateContent, 
+						replacer + ".*?" + replacerEnd, 
 						string.Empty,
 						RegexOptions.Singleline
 					);
 
-				//template = Regex.Replace(template, "(^.*?)(\t)")
-
+				// remove one tab 
+				if( removeLeadingTab )
+					templateContent = Regex.Replace(templateContent, "(^.*?)(\t)",string.Empty,RegexOptions.Multiline);
 			}
-			return template;
+
+			return templateContent;
+		}
+
+
+		private bool checkCondition()
+		{
+			switch( conditionalFlag )
+			{
+				case ConditionalFlag.EnableNamespace:
+					return SharpFactorySettings.Instance.EnableNamespace;
+
+				case ConditionalFlag.UseFolderStructureAsNamespace:
+					return SharpFactorySettings.Instance.UseFolderStructureAsNamespace;
+			}
+
+			return false;
 		}
 	}
 }
